@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import logo from "../assets/logo.png";
 
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:3001";
+const API_BASE_URL =
+  process.env.REACT_APP_API_BASE_URL || "http://localhost:3001";
 
 function Login({ login }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [isAdminLogin, setIsAdminLogin] = useState(false);
   const [comparto, setComparto] = useState("autisti");
 
   const handleSubmit = async (e) => {
@@ -26,14 +28,16 @@ function Login({ login }) {
 
       const user = await res.json();
 
-      // ✅ comparto controllato SOLO per dipendente
-      if (user.ruolo === "dipendente" && user.comparto !== comparto) {
-        alert(`Comparto errato! Il tuo comparto corretto è: ${user.comparto}`);
-        return;
+      // Se dipendente, verifica comparto scelto
+      if (user.ruolo === "dipendente") {
+        if (user.comparto !== comparto) {
+          alert(`Comparto errato! Il tuo comparto corretto è: ${user.comparto}`);
+          return;
+        }
       }
 
-      // ✅ admin passa sempre
-      login(user);
+      // Esegue login (App.js farà setUser)
+      await login(username, password);
     } catch (err) {
       console.error(err);
       alert("Errore di connessione al backend");
@@ -41,33 +45,65 @@ function Login({ login }) {
   };
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "100vh", fontFamily: "Arial, sans-serif" }}>
-      <div style={{ marginBottom: 30, textAlign: "center" }}>
-        <img src={logo} alt="Logo Aziendale" style={{ height: 80 }} />
-      </div>
-
-      <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", width: 300, padding: 20, border: "1px solid #ccc", borderRadius: 10, boxShadow: "0 2px 5px rgba(0,0,0,0.1)", backgroundColor: "#fff" }}>
-        <label>Username</label>
-        <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} required style={{ marginBottom: 10, padding: 6 }} />
-
-        <label>Password</label>
-        <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required style={{ marginBottom: 10, padding: 6 }} />
-
-        <label>Comparto</label>
-        <select value={comparto} onChange={(e) => setComparto(e.target.value)} style={{ marginBottom: 20, padding: 6 }}>
-          <option value="amministrativi">Amministrativi</option>
-          <option value="autisti">Autisti</option>
-          <option value="rimessa">Rimessa</option>
-        </select>
-
-        <button type="submit" style={{ padding: 10, backgroundColor: "#007bff", color: "#fff", border: "none", borderRadius: 5, cursor: "pointer" }}>
-          Accedi
-        </button>
-
-        <div style={{ marginTop: 12, fontSize: 12, color: "#666" }}>
-          Admin: <b>admin / admin</b>
+    <div className="container">
+      <div className="loginWrap">
+        <div className="loginHeader">
+          <img src={logo} alt="Logo Aziendale" className="logo" />
+          <div>
+            <h1 className="title">Gestione Ferie</h1>
+            <p className="muted">Demo full-stack (React + Express)</p>
+          </div>
         </div>
-      </form>
+
+        <form onSubmit={handleSubmit} className="card">
+          <label className="checkRow">
+            <input
+              type="checkbox"
+              checked={isAdminLogin}
+              onChange={(e) => setIsAdminLogin(e.target.checked)}
+            />
+            <span>Accesso admin</span>
+          </label>
+
+          <label>Username</label>
+          <input
+            type="text"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            required
+            autoComplete="username"
+          />
+
+          <label>Password</label>
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            autoComplete="current-password"
+          />
+
+          {!isAdminLogin && (
+            <>
+              <label>Comparto</label>
+              <select value={comparto} onChange={(e) => setComparto(e.target.value)}>
+                <option value="autisti">Autisti</option>
+                <option value="rimessa">Rimessa</option>
+                <option value="amministrativi">Amministrativi</option>
+              </select>
+            </>
+          )}
+
+          <button type="submit" className="btn primary">
+            Accedi
+          </button>
+
+          <div className="hint">
+            <div><b>Demo</b> dipendenti password: <b>1234</b></div>
+            <div><b>Admin</b>: <b>admin / admin</b></div>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }

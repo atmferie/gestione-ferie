@@ -1,55 +1,59 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-function DashboardAdmin({ user, logout }) {
+export default function DashboardAdmin({ user, logout }) {
+  if (!user) {
+    return (
+      <div className="container">
+        <div className="card">
+          <p className="muted">Caricamento...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div style={{ padding: 30, fontFamily: "Arial, sans-serif" }}>
-      <h2 style={{ fontSize: 24 }}>Dashboard Admin</h2>
+    <div className="container">
+      <div className="headerRow">
+        <div>
+          <h2 className="titleSm">Dashboard Admin</h2>
+          <p className="muted">
+            Accesso come <b>{user.nome}</b>
+          </p>
+        </div>
 
-      <p>
-        Benvenuto <b>{user.nome}</b>
-      </p>
-
-      {/* Link alla gestione ferie */}
-      <div style={{ margin: "20px 0" }}>
-        <Link to="/admin/ferie">
-          <button
-            style={{
-              padding: "10px 16px",
-              borderRadius: "5px",
-              border: "none",
-              backgroundColor: "#007bff",
-              color: "white",
-              fontWeight: "bold",
-              cursor: "pointer",
-            }}
-            onMouseOver={(e) => (e.currentTarget.style.filter = "brightness(0.9)")}
-            onMouseOut={(e) => (e.currentTarget.style.filter = "brightness(1)")}
-          >
-            Gestione ferie
-          </button>
-        </Link>
+        <button className="btn danger" onClick={logout}>
+          Logout
+        </button>
       </div>
 
-      {/* Pulsante logout */}
-      <button
-        onClick={logout}
-        style={{
-          padding: "10px 16px",
-          borderRadius: "5px",
-          border: "none",
-          backgroundColor: "red",
-          color: "white",
-          fontWeight: "bold",
-          cursor: "pointer",
-        }}
-        onMouseOver={(e) => (e.currentTarget.style.filter = "brightness(0.9)")}
-        onMouseOut={(e) => (e.currentTarget.style.filter = "brightness(1)")}
-      >
-        Logout
-      </button>
+      <div className="grid">
+        <div className="card">
+          <h3 className="titleSm">Gestione richieste ferie</h3>
+          <p className="muted">
+            Visualizza tutte le richieste (approvate / in attesa) e gestiscile.
+          </p>
+
+          <Link to="/admin/ferie" className="btn primary" style={{ display: "inline-block", textDecoration: "none" }}>
+            Vai a Ferie (Admin)
+          </Link>
+
+          <div className="hint">
+            Demo regole: autisti max 5 approvate • rimessa max 1 • amministrativi max 2
+          </div>
+        </div>
+
+        <div className="card">
+          <h3 className="titleSm">Info progetto</h3>
+          <p className="muted">
+            Demo full-stack: React (frontend) + Express (backend) + JSON storage.
+            Deploy: Vercel + Render.
+          </p>
+          <div className="hint">
+            Suggerimento portfolio: aggiungi screenshot + README “come testare la regola del 6° dipendente”.
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
-
-export default DashboardAdmin;

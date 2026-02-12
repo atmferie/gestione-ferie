@@ -8,6 +8,8 @@ import DashboardAdmin from "./pages/DashboardAdmin";
 import FerieAdmin from "./pages/FerieAdmin";
 
 const STORAGE_KEY = "atm_user";
+const API_BASE_URL =
+  process.env.REACT_APP_API_BASE_URL || "http://localhost:3001";
 
 function App() {
   const [user, setUser] = useState(() => {
@@ -26,9 +28,28 @@ function App() {
     else localStorage.removeItem(STORAGE_KEY);
   }, [user]);
 
-  // ✅ questa è l’unica funzione login: riceve l'utente dal Login.jsx
-  const login = (authenticatedUser) => {
-    setUser(authenticatedUser);
+  // login(username, password) -> chiama backend e salva utente
+  const login = async (username, password) => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password }),
+      });
+
+      if (!res.ok) {
+        alert("Credenziali errate");
+        return false;
+      }
+
+      const data = await res.json();
+      setUser(data);
+      return true;
+    } catch (err) {
+      console.error(err);
+      alert("Errore di connessione al backend");
+      return false;
+    }
   };
 
   const logout = () => setUser(null);
