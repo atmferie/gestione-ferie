@@ -210,3 +210,24 @@ input:focus, select:focus{
   font-size: 22px;
   margin-top: 4px;
 }
+.loginHero{
+  text-align:center;
+  margin: 26px 0 18px;
+}
+
+.loginLogoBig{
+  height: 140px;
+  width: 140px;
+  object-fit: contain;
+  border-radius: 28px;
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,.06);
+  padding: 14px;
+  box-shadow: 0 12px 30px rgba(0,0,0,.25);
+}
+
+.loginTitle{
+  margin: 14px 0 6px;
+  font-size: 34px;
+  letter-spacing: .3px;
+}

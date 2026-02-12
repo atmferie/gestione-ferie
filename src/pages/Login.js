@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import logo from "../assets/logo.png";
 
 const API_BASE_URL =
-  process.env.REACT_APP_API_BASE_URL || "http://localhost:3001";
+  process.env.REACT_APP_API_BASE_URL || "https://gestione-ferie-backend.onrender.com";
 
 function Login({ login }) {
   const [username, setUsername] = useState("");
@@ -28,7 +28,6 @@ function Login({ login }) {
 
       const user = await res.json();
 
-      // Se dipendente, verifica comparto scelto
       if (user.ruolo === "dipendente") {
         if (user.comparto !== comparto) {
           alert(`Comparto errato! Il tuo comparto corretto è: ${user.comparto}`);
@@ -36,7 +35,6 @@ function Login({ login }) {
         }
       }
 
-      // Esegue login (App.js farà setUser)
       await login(username, password);
     } catch (err) {
       console.error(err);
@@ -46,15 +44,13 @@ function Login({ login }) {
 
   return (
     <div className="container">
-      <div className="loginWrap">
-        <div className="loginHeader">
-          <img src={logo} alt="Logo Aziendale" className="logo" />
-          <div>
-            <h1 className="title">Gestione Ferie</h1>
-            <p className="muted">Demo full-stack (React + Express)</p>
-          </div>
-        </div>
+      <div className="loginHero">
+        <img src={logo} alt="Logo Aziendale" className="loginLogoBig" />
+        <h1 className="loginTitle">Gestione Ferie</h1>
+        <p className="muted">Accesso dipendenti e amministrazione</p>
+      </div>
 
+      <div className="loginWrap">
         <form onSubmit={handleSubmit} className="card">
           <label className="checkRow">
             <input
@@ -99,8 +95,7 @@ function Login({ login }) {
           </button>
 
           <div className="hint">
-            <div><b>Demo</b> dipendenti password: <b>1234</b></div>
-            <div><b>Admin</b>: <b>admin / admin</b></div>
+            Dipendenti (demo) password: <b>1234</b> • Admin: <b>admin / admin</b>
           </div>
         </form>
       </div>

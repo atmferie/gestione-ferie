@@ -225,6 +225,32 @@ app.delete("/api/richieste/:id", (req, res) => {
   return res.json({ ok: true, removed });
 });
 
+// PATCH stato richiesta (APPROVATA / RIFIUTATA)
+// PATCH /api/richieste/:id/status  { status: "APPROVATA" | "RIFIUTATA" }
+app.patch("/api/richieste/:id/status", (req, res) => {
+  const { id } = req.params;
+  const { status } = req.body;
+
+  const allowed = ["APPROVATA", "RIFIUTATA", "IN_ATTESA"];
+  if (!allowed.includes(status)) {
+    return res.status(400).json({ error: "Status non valido" });
+  }
+
+  const ferie = readFerie();
+  const idx = ferie.findIndex((r) => r.id === id);
+
+  if (idx === -1) {
+    return res.status(404).json({ error: "Richiesta non trovata" });
+  }
+
+  ferie[idx].status = status;
+  ferie[idx].updatedAt = new Date().toISOString();
+
+  writeFerie(ferie);
+
+  return res.json(ferie[idx]);
+});
+
 app.listen(port, () => {
   console.log(`✅ Backend attivo su http://localhost:${port}`);
 });
